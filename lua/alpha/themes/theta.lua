@@ -199,6 +199,7 @@ local config = {
 return {
     header = header,
     buttons = buttons,
+    section_mru = section_mru,
     mru = mru,
     mru_opts = mru_opts,
     config = config,
