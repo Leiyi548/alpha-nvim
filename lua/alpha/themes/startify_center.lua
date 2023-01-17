@@ -43,7 +43,7 @@ local function button(sc, txt, keybind, keybind_opts)
   local opts = {
     position = "center",
     shortcut = "[" .. sc .. "] ",
-    cursor = 5,
+    cursor = 1,
     width = 50,
     align_shortcut = "left",
     hl_shortcut = { { "Operator", 0, 1 }, { "Number", 1, #sc + 1 }, { "Operator", #sc + 1, #sc + 2 } },
