@@ -123,6 +123,7 @@ local mru_opts = {
         return (string.find(path, "COMMIT_EDITMSG")) or (vim.tbl_contains(default_mru_ignore, ext))
     end,
     autocd = false,
+    special_shortcuts = { "a", "s", "d" },
 }
 
 --- @param start number
@@ -156,8 +157,14 @@ local function mru(start, cwd, items_number, opts)
         else
             short_fn = fnamemodify(fn, ":~")
         end
-        local file_button_el = file_button(fn, tostring(i + start - 1), short_fn, opts.autocd)
-        tbl[i] = file_button_el
+        if i <= #mru_opts.special_shortcuts then
+            local file_button_el = file_button(fn, mru_opts.special_shortcuts[i], short_fn, opts.autocd)
+            tbl[i] = file_button_el
+        else
+            local file_button_el =
+                file_button(fn, tostring(i + start - 1 - #mru_opts.special_shortcuts), short_fn, opts.autocd)
+            tbl[i] = file_button_el
+        end
     end
     return {
         type = "group",
