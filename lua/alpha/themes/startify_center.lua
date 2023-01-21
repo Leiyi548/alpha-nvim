@@ -1,6 +1,10 @@
 local if_nil = vim.F.if_nil
 local fnamemodify = vim.fn.fnamemodify
 local filereadable = vim.fn.filereadable
+local path_ok, plenary_path = pcall(require, 'plenary.path')
+if not path_ok then
+  return
+end
 
 local cow = {
   '        \\   ^__^',
@@ -209,6 +213,15 @@ local function mru(start, cwd, items_number, opts)
     else
       short_fn = fnamemodify(fn, ':~')
     end
+
+    local target_width = 35
+    if #short_fn > target_width then
+      short_fn = plenary_path.new(short_fn):shorten(1, { -2, -1 })
+      if #short_fn > target_width then
+        short_fn = plenary_path.new(short_fn):shorten(1, { -1 })
+      end
+    end
+
     if i <= #mru_opts.special_shortcuts then
       local file_button_el = file_button(fn, mru_opts.special_shortcuts[i], short_fn, opts.autocd)
       tbl[i] = file_button_el
