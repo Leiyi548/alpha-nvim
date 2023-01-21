@@ -2,16 +2,68 @@ local if_nil = vim.F.if_nil
 local fnamemodify = vim.fn.fnamemodify
 local filereadable = vim.fn.filereadable
 
+local cow = {
+  '        \\   ^__^',
+  '         \\  (oo)\\_______',
+  '            (__)\\       )\\/\\',
+  '                ||----w |',
+  '                ||     ||',
+}
+
+quotes = require('alpha.quotes')
+---Returns a random programming quote
+---@return table: Lines of text for the quote
+local function get_random_quote()
+  math.randomseed(os.clock())
+  local index = math.random() * #quotes
+  return quotes[math.floor(index) + 1]
+end
+
+---return longest line length
+---@param lines table
+---@return number longest
+local function get_longest_line_length(lines)
+  local longest = 0
+  for _, line in ipairs(lines) do
+    if vim.fn.strdisplaywidth(line) > longest then
+      longest = vim.fn.strdisplaywidth(line)
+    end
+  end
+  return longest
+end
+
+local quote = get_random_quote()
+while true do
+  if get_longest_line_length(quote) <= vim.o.columns - 15 then
+    break
+  end
+  quote = get_random_quote()
+end
+
+local length = get_longest_line_length(quote) + 4
+
+local default_header_tbl = {}
+
+table.insert(quote, 1, '')
+quote[#quote + 1] = ''
+
+table.insert(default_header_tbl, '▛' .. string.rep('▀', length - 2) .. '▜')
+local function spaces(amount)
+  return string.rep(' ', amount)
+end
+
+for _, line in ipairs(quote) do
+  table.insert(default_header_tbl, '▌' .. ' ' .. line .. spaces(length - 3 - #line) .. '▐')
+end
+table.insert(default_header_tbl, '▙' .. string.rep('▄', length - 2) .. '▟')
+
+for _, line in ipairs(cow) do
+  default_header_tbl[#default_header_tbl + 1] = line
+end
+
 local default_header = {
   type = 'text',
-  val = {
-    [[                                  __                ]],
-    [[     ___     ___    ___   __  __ /\_\    ___ ___    ]],
-    [[    / _ `\  / __`\ / __`\/\ \/\ \\/\ \  / __` __`\  ]],
-    [[   /\ \/\ \/\  __//\ \_\ \ \ \_/ |\ \ \/\ \/\ \/\ \ ]],
-    [[   \ \_\ \_\ \____\ \____/\ \___/  \ \_\ \_\ \_\ \_\]],
-    [[    \/_/\/_/\/____/\/___/  \/__/    \/_/\/_/\/_/\/_/]],
-  },
+  val = default_header_tbl,
   opts = {
     hl = 'Type',
     position = 'center',
@@ -24,7 +76,7 @@ local default_mru_header = {
   type = 'text',
   val = 'MRU ' .. vim.fn.getcwd(),
   opts = {
-    hl = 'SpecialComment',
+    hl = 'keyword',
     position = 'center',
     shrink_margin = false,
     -- wrap = "overflow";
@@ -44,7 +96,7 @@ local function button(sc, txt, keybind, keybind_opts)
     position = 'center',
     shortcut = '[' .. sc .. '] ',
     cursor = 1,
-    width = 50,
+    width = 60,
     align_shortcut = 'left',
     hl_shortcut = { { 'Operator', 0, 1 }, { 'Number', 1, #sc + 1 }, { 'Operator', #sc + 1, #sc + 2 } },
     shrink_margin = false,
@@ -171,10 +223,6 @@ local function mru(start, cwd, items_number, opts)
     val = tbl,
     opts = {},
   }
-end
-
-local function mru_title()
-  return 'MRU ' .. vim.fn.getcwd()
 end
 
 local section = {
