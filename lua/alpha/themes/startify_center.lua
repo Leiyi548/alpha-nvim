@@ -143,6 +143,19 @@ local function icon(fn)
   return nwd.get_icon(fn, ext, { default = true })
 end
 
+--- @param sc string
+--- @param icon_txt string
+--- @param desc string
+--- @param icon_hl_group string
+local function icon_button(sc, icon_txt, desc, cmd, icon_hl_group)
+  local fb_hl = {}
+  table.insert(fb_hl, { icon_hl_group, 0, 1 })
+  local icon_button_el = button(sc, icon_txt .. '  ' .. desc, '<cmd>' .. cmd .. '<CR>')
+  -- table.insert(fb_hl, { 'Comment', 2, -1 })
+  icon_button_el.opts.hl = fb_hl
+  return icon_button_el
+end
+
 local function file_button(fn, sc, short_fn, autocd)
   short_fn = if_nil(short_fn, fn)
   local ico_txt
@@ -324,6 +337,7 @@ return {
   icon = icon,
   button = button,
   file_button = file_button,
+  icon_button = icon_button,
   mru = mru,
   mru_opts = mru_opts,
   section = section,
