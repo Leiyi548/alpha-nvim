@@ -623,6 +623,9 @@ function alpha.start(on_vimenter, conf)
     open = false,
   }
 
+  vim.keymap.set('n', '<2-LeftMouse>', function()
+    alpha.press()
+  end, { noremap = false, silent = true, buffer = state.buffer })
   vim.keymap.set('n', '<CR>', function()
     alpha.press()
   end, { noremap = false, silent = true, buffer = state.buffer })
